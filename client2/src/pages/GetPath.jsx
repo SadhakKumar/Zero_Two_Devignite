@@ -4,6 +4,7 @@ import MapboxComponent from "../components/MapboxCpmponent";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "antd";
+import { SignInButton, SignOutButton, SignedIn, SignedOut } from "@clerk/clerk-react";
 
 import { getNearestStation } from "../utils/nearestStation";
 import { firestore, doc, getDoc } from "../firebase";
