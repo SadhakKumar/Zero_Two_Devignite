@@ -8,7 +8,6 @@ import { Alert } from "antd";
 import { getNearestStation } from "../utils/nearestStation";
 import { firestore, doc, getDoc } from "../firebase";
 
-
 const GetPath = () => {
   const [source, setSource] = useState([]);
   const [destination, setDestination] = useState([]);
@@ -24,23 +23,27 @@ const GetPath = () => {
   const [loading, setLoading] = useState(false);
   const [estimatedDistance, setEstimatedDistance] = useState(0);
   const [actualDistance, setActualDistance] = useState(0);
-  const [latLon, setLatLon] = useState();
+  const [lat, setLat] = useState(0);
+  const [lon, setLon] = useState(0);
+  const [arr, setArr] = useState([]);
 
-  console.log("source", source);
-  console.log("destination", destination);
+  const [nearestStation, setNearestStation] = useState([]);
 
   const getCurrentLatLon = async () => {
-    const docRef = doc(firestore, "users", "at450x");
+    const docRef = doc(firestore, "ev", "at450x");
     const docSnap = await getDoc(docRef);
 
+    console.log("docSnap", docSnap.data());
+
     if (docSnap.exists()) {
-      setLatLon({
-        lat: docSnap.data().lat,
-        lan: docSnap.data().lon,
-      });
+      setLat(docSnap.data().lat);
+      setLon(docSnap.data().lon);
     }
 
-    console.log(latLon);
+    console.log({
+      lat: lat,
+      lon: lon,
+    });
   };
 
   useEffect(() => {
@@ -64,16 +67,17 @@ const GetPath = () => {
       "https://api.mapbox.com/directions/v5/mapbox/driving/72.894434%2C19.049821%3B73.867274%2C18.470933?alternatives=true&geometries=geojson&language=en&overview=full&steps=true&access_token=pk.eyJ1IjoibXJ1bmFsMTIzNDU2Nzg5IiwiYSI6ImNsbWhzbWF2cTBzajAzcXIybTVoa3g1anQifQ.66Fu05Ii8-NVd-w-C-FSgA";
     const response = await fetch(mapBoxUrl);
     const data = await response.json();
-    console.log("new Data", data);
+
     setActualDistance(Number(data.routes[0].distance) / 1000);
     console.log("data", data.routes[0].geometry.coordinates.length);
 
     const poly = data.routes[0].geometry.coordinates;
     setPolyPoints([...poly]);
     const arr = [];
+
     const finalData = data.routes[0].geometry.coordinates
       .map((data, i) => {
-        return { lat: data[1], lon: data[0] };
+        return [data[0], data[1]];
       })
       .filter((data, i) => {
         return i % 200 === 0;
@@ -83,7 +87,7 @@ const GetPath = () => {
     console.log("cordinates", cordinates);
     if (cordinates.length > 0) {
       let i = 0;
-      setLoading(true);
+      console.log("new Data", cordinates);
       // for (i; i < cordinates.length; i++) {
       //   const res = await getNearestLocation(
       //     cordinates[i].lat,
@@ -93,10 +97,9 @@ const GetPath = () => {
       //   arr.push(res);
       //  }
     }
-    console.log("polyPoints", polyPoints, arr);
-    setLoading(false);
-    if (polyPoints.length > 0)
-      navigate("/plans", { state: { polyPoints, arr } });
+    // console.log("polyPoints", polyPoints, arr);
+    // setLoading(false);
+    // if (polyPoints.length > 0)
   };
 
   const getPredDistance = async (lat, lon) => {
@@ -199,52 +202,80 @@ const GetPath = () => {
 
   return (
     <div>
-       <div className="navbar md:bg-transparent
+      <div
+        className="navbar md:bg-transparent
        overflow-x-hidden
-       bg-[#0f1021] md:shadow-none shadow-white shadow-sm">
-          <div className=" flex-1 z-1000 ">
+       bg-[#0f1021] md:shadow-none shadow-white shadow-sm"
+      >
+        <div className=" flex-1 z-1000 ">
           <h2 className="text-xl md:text-3xl text-slate-200 font-bold ml-4">
             Select Source & Destination
           </h2>
-          </div>
-          <button
-            onClick={async () => {
-              getCordinates();
-              await getPredDistance();
+        </div>
+        <button
+          onClick={async () => {
+            // getCordinates();
+            // await getPredDistance();
 
-              console.log(actualDistance);
-              console.log(estimatedDistance);
+            console.log(actualDistance);
+            console.log(estimatedDistance);
 
-              if (actualDistance === 0 && estimatedDistance === 0) {
-                return;
-              }
+            // if (actualDistance === 0 && estimatedDistance === 0) {
+            //   return;
+            // }
 
-              if (actualDistance > estimatedDistance) {
-                getCurrentLatLon();
-                //  alert('You are running out of battery')
-                getNearestStation(latLon.lat, latLon.lon, estimatedDistance);
-              } else {
-                alert("You are good to go");
-              }
-            }}
-            className=" 
+            // if (actualDistance > estimatedDistance) {
+            getCordinates().then((res) => {
+              console.log("get coord res", res);
+              getCurrentLatLon().then((res) => {
+                console.log("get curr lat res", res);
+                getNearestStation(19.050412, 72.894294, 2).then((res) => {
+                  if (cordinates.length > 0) {
+                    navigate("/plans", { state: { res, cordinates } });
+                  }
+                });
+              });
+            });
+
+            console.log("imp data", {
+              arr,
+              polyPoints,
+            });
+
+            console.log({
+              polyPoints,
+              arr,
+            });
+            // setTime(() => {
+            //   navigate("/plans", { state: { polyPoints, arr } });
+            // }, 8000);
+            //  alert('You are running out of battery')
+            console.log("latLon", lat);
+            if (lat && lon) {
+            }
+            if (nearestStation.length > 0) {
+            }
+            // } else {
+            //   alert("You are good to go");
+            // }
+          }}
+          className=" 
     
             btn bg-black text-white
             md:w-[14%]  md:mr-8"
-          >
-            Get EV Stations ->
-          </button>
-        </div>
+        >
+          Get EV Stations ->
+        </button>
+      </div>
 
-
-        <div className="w-[98%] mx-auto">
-          <MapboxComponent
-            setDestination={setDestination}
-            setSource={setSource}
-            setPath={setPath}
-            setTime={setTime}
-          />
-        </div>
+      <div className="w-[98%] mx-auto">
+        <MapboxComponent
+          setDestination={setDestination}
+          setSource={setSource}
+          setPath={setPath}
+          setTime={setTime}
+        />
+      </div>
     </div>
   );
 };

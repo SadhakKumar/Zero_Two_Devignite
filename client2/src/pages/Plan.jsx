@@ -5,10 +5,7 @@ import { useLocation } from "react-router-dom";
 const Plan = () => {
   const location = useLocation();
 
-  const { polyPoints, arr } = location.state;
-  console.log("location", polyPoints);
-
-  console.log("attractions", location.state);
+  console.log("location", location.state);
 
   return (
     <div className="flex gap-8">
@@ -24,8 +21,7 @@ const Plan = () => {
         
         "
         >
-          {arr.map((data, i) => {
-           
+          {/* {arr.map((data, i) => {
             return (
               <li className="">
                 <div className="timeline-start timeline-box text-lg">
@@ -51,11 +47,14 @@ const Plan = () => {
                 <hr />
               </li>
             );
-          })}
+          })} */}
         </ul>
       </div>
       <div className=" w-[50%]">
-        <PolyLineComponent polyPoints={polyPoints} />
+        <PolyLineComponent
+          polyPoints={location.state.res}
+          arr={location.state.cordinates}
+        />
       </div>
     </div>
   );
