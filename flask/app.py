@@ -1,10 +1,17 @@
 from flask import Flask,request,jsonify;
 # import util;
+<<<<<<< HEAD
 # app=Flask(__name__)
 from flask_cors import CORS 
 
 app = Flask(__name__)
 CORS(app) 
+=======
+import os
+from flask_cors import CORS, cross_origin
+app=Flask(__name__)
+cors = CORS(app)
+>>>>>>> 2584b908722e493db81cb9343964f3bbab7577a3
 
 import json;
 import pickle;
@@ -41,12 +48,12 @@ def load_saved_artifacts():
     global __data_columns
     global __locations
 
-    with open("flask/columns.json",'r') as f:
+    with open("columns.json",'r') as f:
         __data_columns=json.load(f)['data_columns']
         __locations=__data_columns[2:]
     global __model
     if __model is None:
-        with open('flask/predict_range.pkl','rb') as f:
+        with open('predict_range.pkl','rb') as f:
             __model=pickle.load(f)
     print('loading saved artifacts...done')
 
@@ -56,17 +63,17 @@ def get_location_names():
     response = jsonify({
         'model': get_location_names()
     })
-    response.headers.add('Access-Control-Allow-Origin','*')
     print(response)
     print('3444')
     return response
 
-@app.route('/predict_range')
+@app.route('/predict_range', methods=['POST'])
 def predict_range():
     # print('123')
     # model=request.body('model')
     # battery=request.body('battery')
     # mode=request.body('mode')
+    print('req json', request.json)
     data = request.json
     model = data.get('model')
     battery = data.get('battery')
@@ -92,7 +99,7 @@ def predict_range():
         'estimated_range':round(__model.predict([X])[0],2)
     })
     print('3444')
-    response.headers.add('Access-Control-Allow-Origin','*')
+   
 
     return response
 
