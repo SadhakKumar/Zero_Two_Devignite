@@ -1,5 +1,5 @@
 .dashboard {
-    margin-top: 100px;
+    margin-top: 30px;
     padding: 0px 30px;
     padding-bottom: 50px;
   }
@@ -243,13 +243,19 @@
     border-radius: 50px;
     cursor: pointer;
   }
+
+  .CircularProgressbar-text {
+    margin-right: 20px;
+  }
   
   .box__02 {
+    
     justify-content: center;
     align-items: center;
     align:center;
-    height: 180px;
-    width: 180px;
+    text-align: center;
+    height: 200px;
+    width: 200px;
   }
   
   .circle__wrapper h4 {
