@@ -11,13 +11,14 @@ import { getFirestore,collection,setDoc,doc ,serverTimestamp,getDoc,addDoc,query
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: "AIzaSyAxRDk7nlFz1mnGxbolwad2zz8R7hUVng8",
-  authDomain: "devignite-1be75.firebaseapp.com",
-  projectId: "devignite-1be75",
-  storageBucket: "devignite-1be75.appspot.com",
-  messagingSenderId: "1085865395399",
-  appId: "1:1085865395399:web:09118ca94c4fc0868aaae2",
-  measurementId: "G-T98D9HRNFG"
+    apiKey: "AIzaSyAOutxB8PLl8T3y4-vpBp5zdDgPaq8allk",
+    authDomain: "devignite-5823b.firebaseapp.com",
+    databaseURL: "https://devignite-5823b-default-rtdb.firebaseio.com",
+    projectId: "devignite-5823b",
+    storageBucket: "devignite-5823b.appspot.com",
+    messagingSenderId: "621067507703",
+    appId: "1:621067507703:web:7694fe736c793b424200f2",
+    measurementId: "G-9BJXN9S2E3"
 };
 
 

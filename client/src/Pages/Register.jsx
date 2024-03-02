@@ -4,7 +4,7 @@ import {
   createUserWithEmailAndPassword,
   updateProfile
 } from "firebase/auth";
-import {auth, firestore, setDoc, doc } from "../firebase"; // Assuming you have the firestore instance
+import {auth, firestore, setDoc, doc, addDoc } from "../firebase"; // Assuming you have the firestore instance
 
 function Signup() {
 //   const navigate = useNavigate();
@@ -30,27 +30,37 @@ function Signup() {
     createUserWithEmailAndPassword(auth, values.email, values.pass)
       .then(async (res) => {
         setSubmitButtonDisabled(false);
-        console.log(res)
+        // console.log(res)
         const user = res.user;
 
-        await updateProfile(user, {
-          displayName: values.name,
-        });
+        // await updateProfile(user, {
+        //   displayName: values.name,
+        // });
+        
+        const userCollection ="users";
 
+        // Use the respective collection reference
+        const userRef = doc(firestore, userCollection, user.uid);
+
+        // console.log(userRef);
+
+        // Set user data in Firestore
         const userData = {
           displayName: values.name,
           email: values.email,
           model: values.model,
         };
-
-        await firestore.collection('users').doc(userCredential.user.uid).set({
-            displayName: values.name,
-            email: values.email,
-            model: values.model,
-            // You can add additional fields as needed
-          });
-
+        console.log(userData);
+        await addDoc(userRef, userData);
         console.log("after setdoc");
+
+        // await firestore.collection('users').doc(userCredential.user.uid).set({
+        //     displayName: values.name,
+        //     email: values.email,
+        //     model: values.model,
+        //     // You can add additional fields as needed
+        //   });
+
 
         
       })
