@@ -47,6 +47,7 @@ const CarHomePage = () => {
   useEffect(() => {
     if (user) {
       setMounted(true);
+      getNearestStation(18.5204, 73.8567, 10);
     }
   }, [user]);
 
