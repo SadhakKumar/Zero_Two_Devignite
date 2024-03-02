@@ -1,13 +1,11 @@
 import React from "react";
 
-import { BarChart, Bar, Rectangle, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-
-
+import { ResponsiveContainer, BarChart, Bar, XAxis, Tooltip } from "recharts";
 
 
 const MileChart = () => {
 
-  const data = [
+  const mileStatics = [
     {
       name: "Sat",
       mileStats: 6000,
@@ -37,29 +35,16 @@ const MileChart = () => {
       mileStats: 5490,
     },
   ];
-  return (
-    <ResponsiveContainer width="100%" height="100%">
-    <BarChart
-      width={500}
-      height={300}
-      data={data}
-      margin={{
-        top: 5,
-        right: 30,
-        left: 20,
-        bottom: 5,
-      }}
-    >
-      <CartesianGrid strokeDasharray="3 3" />
-      <XAxis dataKey="name" />
-      <YAxis />
-      <Tooltip />
-      <Legend />
-      <Bar dataKey="mileStats" fill="#8884d8" activeBar={<Rectangle fill="pink" stroke="blue" />} />
-      
-    </BarChart>
-  </ResponsiveContainer>
 
+  return (
+    <ResponsiveContainer width="100%">
+      <BarChart data={mileStatics}>
+        <XAxis dataKey="name" stroke="#2884ff" />
+        <Bar dataKey="mileStats" stroke="#2884ff" fill="#2884ff" barSize={30} />
+
+        <Tooltip wrapperClassName="tooltip__style" cursor={false} />
+      </BarChart>
+    </ResponsiveContainer>
   );
 };
 

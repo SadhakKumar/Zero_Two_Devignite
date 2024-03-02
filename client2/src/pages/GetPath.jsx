@@ -4,8 +4,10 @@ import MapboxComponent from "../components/MapboxCpmponent";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "antd";
+
 import { getNearestStation } from "../utils/nearestStation";
 import { firestore, doc, getDoc } from "../firebase";
+
 
 const GetPath = () => {
   const [source, setSource] = useState([]);
@@ -197,45 +199,13 @@ const GetPath = () => {
 
   return (
     <div>
-      <Navbar />
-      <div className="flex">
-        <div
-          className="first w-[35%] flex flex-col
-        items-start justify-start p-8
-        "
-        >
-          <h2 className="text-4xl font-bold my-8 pb-4 ">
-            Tell us what's your plan?
+       <div className="navbar md:bg-transparent
+       overflow-x-hidden
+       bg-[#0f1021] md:shadow-none shadow-white shadow-sm">
+          <div className=" flex-1 z-1000 ">
+          <h2 className="text-xl md:text-3xl text-slate-200 font-bold ml-4">
+            Select Source & Destination
           </h2>
-          <div className="w-full flex justify-center pr-14 pt-2">
-            <label className="form-control w-full">
-              <div className="label">
-                <span className="label-text">Select Start Location</span>
-              </div>
-              <input
-                type="text"
-                placeholder="mumbai"
-                disabled
-                name="eventName"
-                value={sourceCity}
-                className="input input-bordered w-full"
-              />
-            </label>
-          </div>
-          <div className="w-full flex justify-center pr-14 pt-2">
-            <label className="form-control w-full">
-              <div className="label">
-                <span className="label-text">Select Destination Location</span>
-              </div>
-              <input
-                type="text"
-                placeholder="Pune"
-                disabled
-                name="eventName"
-                value={destinationCity}
-                className="input input-bordered w-full"
-              />
-            </label>
           </div>
           <button
             onClick={async () => {
@@ -257,14 +227,17 @@ const GetPath = () => {
                 alert("You are good to go");
               }
             }}
-            className="mt-12 
+            className=" 
+    
             btn bg-black text-white
-            w-[60%]  my-8"
+            md:w-[14%]  md:mr-8"
           >
-            Get Plans
+            Get EV Stations ->
           </button>
         </div>
-        <div className="second w-[60%]">
+
+
+        <div className="w-[98%] mx-auto">
           <MapboxComponent
             setDestination={setDestination}
             setSource={setSource}
@@ -272,7 +245,6 @@ const GetPath = () => {
             setTime={setTime}
           />
         </div>
-      </div>
     </div>
   );
 };
