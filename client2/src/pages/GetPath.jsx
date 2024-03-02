@@ -3,6 +3,7 @@ import Navbar from "../components/Navbar";
 import MapboxComponent from "../components/MapboxCpmponent";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { Alert } from "antd";
 
 const GetPath = () => {
   const [source, setSource] = useState([]);
@@ -17,6 +18,12 @@ const GetPath = () => {
   const [cordinates, setCordinates] = useState([]);
   const [attractions, setAttractions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [estimatedDistance, setEstimatedDistance] = useState(0);
+  const [actualDistance, setActualDistance] = useState(0);
+
+
+  console.log("source", source);
+  console.log("destination", destination);
 
   useEffect(() => {
     getLocationName(source[1], source[0], setSourceCity);
@@ -39,11 +46,11 @@ const GetPath = () => {
       "https://api.mapbox.com/directions/v5/mapbox/driving/72.894434%2C19.049821%3B73.867274%2C18.470933?alternatives=true&geometries=geojson&language=en&overview=full&steps=true&access_token=pk.eyJ1IjoibXJ1bmFsMTIzNDU2Nzg5IiwiYSI6ImNsbWhzbWF2cTBzajAzcXIybTVoa3g1anQifQ.66Fu05Ii8-NVd-w-C-FSgA";
     const response = await fetch(mapBoxUrl);
     const data = await response.json();
+    console.log("new Data", data)
+    setActualDistance(Number(data.routes[0].distance)/1000);
     console.log("data", data.routes[0].geometry.coordinates.length);
 
-    const poly = data.routes[0].geometry.coordinates.filter(
-      (data, i) => i % 200 === 0
-    );
+    const poly = data.routes[0].geometry.coordinates
     setPolyPoints([...poly]);
     const arr = [];
     const finalData = data.routes[0].geometry.coordinates
@@ -59,20 +66,43 @@ const GetPath = () => {
     if (cordinates.length > 0) {
       let i = 0;
       setLoading(true);
-      for (i; i < cordinates.length; i++) {
-        const res = await getNearestLocation(
-          cordinates[i].lat,
-          cordinates[i].lon
-        );
+      // for (i; i < cordinates.length; i++) {
+      //   const res = await getNearestLocation(
+      //     cordinates[i].lat,
+      //     cordinates[i].lon
+      //   );
 
-        arr.push(res);
-      }
+      //   arr.push(res);
+    //  }
     }
-    console.log("polyPoints", attractions);
+    console.log("polyPoints", polyPoints, arr);
     setLoading(false);
     if (polyPoints.length > 0)
       navigate("/plans", { state: { polyPoints, arr } });
   };
+
+  const getPredDistance = async (lat, lon) => {
+    try {
+      const response = await axios.post('http://127.0.0.1:5000/predict_range', {
+          model: "Ampere",
+          battery: 70,
+          mode: 1
+        },
+       { headers: {
+          'Content-Type': 'application/json'
+        }}
+      );
+  
+      setEstimatedDistance(response.data.estimated_range);
+      // Handle response data here
+    } catch (error) {
+      console.error('Error:', error);
+      // Handle error here
+    }
+  };
+  
+
+
 
   const getNearestLocation = async (lat, lon) => {
     const options = {
@@ -190,7 +220,24 @@ const GetPath = () => {
             </label>
           </div>
           <button
-            onClick={() => getCordinates()}
+            onClick={async () => {
+             getCordinates()
+             await getPredDistance()
+
+             console.log(actualDistance)
+             console.log(estimatedDistance)
+
+             if((actualDistance === 0 && estimatedDistance === 0)){
+              return
+             }
+             
+             if((actualDistance > estimatedDistance)){
+               alert('You are running out of battery')
+             }
+             else {
+              alert('You are good to go')
+             }
+            }}
             className="mt-12 
             btn bg-black text-white
             w-[60%]  my-8"

@@ -35,11 +35,11 @@ class PolyLineComponent extends React.Component {
       unit: "metric",
       profile: "mapbox/driving",
     });
-    if (this.props.polyPoints.length > 0) {
-      this.props.polyPoints.map((data, i) => {
-        new mapboxgl.Marker().setLngLat(data).addTo(map);
-      });
-    }
+    // if (this.props.polyPoints.length > 0) {
+    //   this.props.polyPoints.map((data, i) => {
+    //     new mapboxgl.Marker().setLngLat(data).addTo(map);
+    //   });
+    // }
     // map.on("load", function () {
     //   directions.setOrigin("Toronto, Ontario"); // On load, set the origin to "Toronto, Ontario".
     //   directions.setDestination("Montreal, Quebec"); // On load, set the destination to "Montreal, Quebec".
@@ -47,17 +47,17 @@ class PolyLineComponent extends React.Component {
 
     map.on("load", () => {
       console.log("map loaded");
-      // map.addSource("route", {
-      //   type: "geojson",
-      //   data: {
-      //     type: "Feature",
-      //     properties: {},
-      //     geometry: {
-      //       type: "LineString",
-      //       coordinates: this.props.polyPoints,
-      //     },
-      //   },
-      // });
+      map.addSource("route", {
+        type: "geojson",
+        data: {
+          type: "Feature",
+          properties: {},
+          geometry: {
+            type: "LineString",
+            coordinates: this.props.polyPoints,
+          },
+        },
+      });
       map.addLayer({
         id: "route",
         type: "line",
