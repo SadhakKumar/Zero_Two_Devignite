@@ -8,51 +8,30 @@ const Plan = () => {
   console.log("location", location.state);
 
   return (
-    <div className="flex gap-8">
+    <div className="flex flex-col gap-3">
       <div
-        className="text-2xl font-bold my-8 pb-4 w-[400px] mx-4
-      flex flex-col items-start
-      "
+        className="navbar md:bg-transparent
+       overflow-x-hidden
+       bg-[#0f1021] md:shadow-none shadow-white shadow-sm"
       >
-        <h1>Your Personalized plan is ready</h1>
-        <ul
-          className="timeline w-[300px] timeline-vertical mt-4
-        flex flex-col items-start ml-12
-        
-        "
+        <div className=" flex-1 z-1000 ">
+          <h2 className="text-xl md:text-3xl text-slate-200 font-bold ml-4">
+            Select Source & Destination
+          </h2>
+        </div>
+        <button
+          className=" 
+    
+            btn bg-black text-white
+            md:w-[14%]  md:mr-8"
         >
-          {/* {arr.map((data, i) => {
-            return (
-              <li className="">
-                <div className="timeline-start timeline-box text-lg">
-                  {Number(data.data[0].distance).toFixed(2)} km
-                </div>
-                <div className="timeline-middle">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="w-5 h-5"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.857-9.809a.75.75 0 00-1.214-.882l-3.483 4.79-1.88-1.88a.75.75 0 10-1.06 1.061l2.5 2.5a.75.75 0 001.137-.089l4-5.5z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-                <div className="timeline-end timeline-box text-lg">
-                  {data.data[0].name}
-                </div>
-                <hr />
-              </li>
-            );
-          })} */}
-        </ul>
+          Back To Home
+        </button>
       </div>
-      <div className=" w-[50%]">
+
+      <div className="w-[98%] mx-auto">
         <PolyLineComponent
-          polyPoints={location.state.res}
+          polyPoints={[...location.state.res]}
           arr={location.state.cordinates}
         />
       </div>

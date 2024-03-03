@@ -25,8 +25,8 @@ class PolyLineComponent extends React.Component {
   componentDidMount() {
     const map = new mapboxgl.Map({
       container: "map",
-      style: "mapbox://styles/mapbox/streets-v10",
-      center: [73.867204, 18.470839],
+      style: "mapbox://styles/mapbox/navigation-night-v1",
+      center: [72.894294, 19.050412],
       zoom: 12,
     });
     console.log("polypoints", this.props);
@@ -51,7 +51,7 @@ class PolyLineComponent extends React.Component {
           .setLngLat([data.longitude, data.lattitude])
           .setPopup(
             new mapboxgl.Popup({ offset: 25 }) // add popups
-              .setHTML(`<h3>${i}</h3><p>${data.latitude}</p>`)
+              .setHTML(`<h3>${data.address}</h3><p>${data.name}</p>`)
           )
           .addTo(map);
       });

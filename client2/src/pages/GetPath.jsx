@@ -59,7 +59,7 @@ const GetPath = () => {
     const data = await response.json();
     fn(data.city);
   };
-
+  const arr1 = [];
   const getCordinates = async () => {
     var url = `http://router.project-osrm.org/route/v1/driving/${source[1]},${source[0]};${destination[1]},${destination[0]}?steps=true&annotations=true&geometries=geojson&overview=full`;
 
@@ -73,7 +73,6 @@ const GetPath = () => {
 
     const poly = data.routes[0].geometry.coordinates;
     setPolyPoints([...poly]);
-    const arr = [];
 
     const finalData = data.routes[0].geometry.coordinates
       .map((data, i) => {
@@ -82,21 +81,31 @@ const GetPath = () => {
       .filter((data, i) => {
         return i % 200 === 0;
       });
-    console.log("cordinates", finalData);
+
+    const allData = data.routes[0].geometry.coordinates.map((data, i) => {
+      return [data[0], data[1]];
+    });
+
     setCordinates([...finalData]);
     console.log("cordinates", cordinates);
-    if (cordinates.length > 0) {
+    if (allData.length > 0) {
       let i = 0;
-      console.log("new Data", cordinates);
-      // for (i; i < cordinates.length; i++) {
-      //   const res = await getNearestLocation(
-      //     cordinates[i].lat,
-      //     cordinates[i].lon
-      //   );
-
-      //   arr.push(res);
-      //  }
+      setLoading(true);
+      for (i; i < allData.length; i++) {
+        if (i % 200 === 0) {
+          const response = await getNearestStation(
+            allData[i][1],
+            allData[i][0],
+            2
+          );
+          arr1.push(...arr1, ...response);
+        }
+      }
     }
+    setArr(...arr1);
+    console.log("arr", arr1);
+
+    setLoading(false);
     // console.log("polyPoints", polyPoints, arr);
     // setLoading(false);
     // if (polyPoints.length > 0)
@@ -225,15 +234,17 @@ const GetPath = () => {
             // }
 
             // if (actualDistance > estimatedDistance) {
+
             getCordinates().then((res) => {
               console.log("get coord res", res);
               getCurrentLatLon().then((res) => {
                 console.log("get curr lat res", res);
-                getNearestStation(19.050412, 72.894294, 2).then((res) => {
-                  if (cordinates.length > 0) {
-                    navigate("/plans", { state: { res, cordinates } });
-                  }
-                });
+                if (cordinates.length > 0) {
+                  console.log("arr1", arr1);
+                  navigate("/plans", {
+                    state: { res: new Set(arr1), cordinates },
+                  });
+                }
               });
             });
 
