@@ -62,27 +62,31 @@ const CarHomePage = () => {
   };
 
   useEffect(() => {
-    getVehicleData();
-    getNearestStation(18.5204, 73.8567, 10);
+    // getVehicleData();
+    // getNearestStation(18.5204, 73.8567, 10);
   }, []);
+
+  
 
   if (!mounted) {
     return <div>Loading...</div>;
   }
   return (
     <>
-      <div className="bg-white hero flex flex-col">
-        <div className="navbar bg-transparent">
+      <div className="bg-white hero flex flex-col overflow-y-scroll">
+        <div className="navbar md:bg-transparent bg-[#0f1021] md:shadow-none shadow-white shadow-sm">
           <div className="flex-1 z-1000 ">
             <a
               href="#"
-              className="btn btn-ghost text-4xl font-['penna'] text-white"
+              className="btn btn-ghost md:text-4xl text-2xl font-['penna'] text-white"
             >
               EVWAY
             </a>
           </div>
           <div className="flex-none">
-            <button className="btn px-12 btn-neutral mr- rounded-full">
+            <button className="
+            h-12 
+            btn px-12 btn-neutral mr- rounded-full">
               <SignedOut>
                 <SignInButton />
               </SignedOut>
@@ -93,9 +97,9 @@ const CarHomePage = () => {
           </div>
         </div>
         <div className="dashboard">
-          <h1 className="text-3xl font-bold text-white mb-4">Dashboard</h1>
+          <h1 className="md:text-3xl text-xl font-bold text-white mb-4">Dashboard</h1>
           <div className="dashboard__wrapper">
-            <div className="dashboard__cards">
+            <div className="dashboard__cards flex flex-wrap">
               <SingleCard item={carObj} />
               <SingleCard item={tripObj} />
               <SingleCard item={clientObj} />
@@ -103,12 +107,13 @@ const CarHomePage = () => {
             </div>
           </div>
         </div>
-        <div className="box__02_wrapper">
-          <div className="flex flex-col items-center gap-8">
-            <h2 className="text-white font-bold text-2xl">Battery Status</h2>
+        <div className="box__02_wrapper flex  flex-col-reverse md:flex-row items-start md:items-center">
+          <div className="flex flex-col items-center ml-8  gap-8 my-12 md:my-0">
+            <h2 className="text-white  font-bold text-2xl">Battery Status</h2>
             <div className="box__02 relative">
               <CircularProgressbar
-                value={vehicleData.battery}
+              value={80}
+                //value={vehicleData.battery}
                 styles={buildStyles({
                   pathColor: "#01d293",
                   textColor: "trailColor",
@@ -124,15 +129,21 @@ const CarHomePage = () => {
          absolute top-1/2 left-1/2 transform -translate-x-1/3 -translate-y-[24px]
          text-white mt-3 font-bold text-2xl"
               >
-                {vehicleData.battery} %
+                {/* {vehicleData.battery} % */}
+                80%
               </p>
             </div>
           </div>
 
+          <div className="stats flex flex-col items-start w-[90%] mt-4 md:mt-0 md:w-[30%] md:ml-12 overflow-x-hidden overflow-y-hidden">
+            <h3 className="stats__title">Miles Statistics</h3>
+            <MileChart />
+          </div>
+
           <CarItem />
 
-          <div className=" w-[40%] flex flex-col items-start justify-center text-start ml-20 ">
-            <div className="hero-content flex-col items-start lg:flex-row mx-16">
+          <div className="w-full md:w-[40%] flex flex-col items-start justify-center text-start md:ml-4">
+            <div className="hero-content flex-col items-start lg:flex-row">
               <div className="mx-8 flex flex-col items-start gap-3">
                 <h1 className="text-5xl font-bold text-white">
                   Welcome back {user.firstName}

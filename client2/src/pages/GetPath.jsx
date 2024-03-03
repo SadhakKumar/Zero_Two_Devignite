@@ -4,6 +4,7 @@ import MapboxComponent from "../components/MapboxCpmponent";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "antd";
+
 import { getNearestStation } from "../utils/nearestStation";
 import { firestore, doc, getDoc } from "../firebase";
 
@@ -22,23 +23,27 @@ const GetPath = () => {
   const [loading, setLoading] = useState(false);
   const [estimatedDistance, setEstimatedDistance] = useState(0);
   const [actualDistance, setActualDistance] = useState(0);
-  const [latLon, setLatLon] = useState();
+  const [lat, setLat] = useState(0);
+  const [lon, setLon] = useState(0);
+  const [arr, setArr] = useState([]);
 
-  console.log("source", source);
-  console.log("destination", destination);
+  const [nearestStation, setNearestStation] = useState([]);
 
   const getCurrentLatLon = async () => {
-    const docRef = doc(firestore, "users", "at450x");
+    const docRef = doc(firestore, "ev", "at450x");
     const docSnap = await getDoc(docRef);
 
+    console.log("docSnap", docSnap.data());
+
     if (docSnap.exists()) {
-      setLatLon({
-        lat: docSnap.data().lat,
-        lan: docSnap.data().lon,
-      });
+      setLat(docSnap.data().lat);
+      setLon(docSnap.data().lon);
     }
 
-    console.log(latLon);
+    console.log({
+      lat: lat,
+      lon: lon,
+    });
   };
 
   useEffect(() => {
@@ -54,7 +59,7 @@ const GetPath = () => {
     const data = await response.json();
     fn(data.city);
   };
-
+  const arr1 = [];
   const getCordinates = async () => {
     var url = `http://router.project-osrm.org/route/v1/driving/${source[1]},${source[0]};${destination[1]},${destination[0]}?steps=true&annotations=true&geometries=geojson&overview=full`;
 
@@ -62,39 +67,48 @@ const GetPath = () => {
       "https://api.mapbox.com/directions/v5/mapbox/driving/72.894434%2C19.049821%3B73.867274%2C18.470933?alternatives=true&geometries=geojson&language=en&overview=full&steps=true&access_token=pk.eyJ1IjoibXJ1bmFsMTIzNDU2Nzg5IiwiYSI6ImNsbWhzbWF2cTBzajAzcXIybTVoa3g1anQifQ.66Fu05Ii8-NVd-w-C-FSgA";
     const response = await fetch(mapBoxUrl);
     const data = await response.json();
-    console.log("new Data", data);
+
     setActualDistance(Number(data.routes[0].distance) / 1000);
     console.log("data", data.routes[0].geometry.coordinates.length);
 
     const poly = data.routes[0].geometry.coordinates;
     setPolyPoints([...poly]);
-    const arr = [];
+
     const finalData = data.routes[0].geometry.coordinates
       .map((data, i) => {
-        return { lat: data[1], lon: data[0] };
+        return [data[0], data[1]];
       })
       .filter((data, i) => {
         return i % 200 === 0;
       });
-    console.log("cordinates", finalData);
+
+    const allData = data.routes[0].geometry.coordinates.map((data, i) => {
+      return [data[0], data[1]];
+    });
+
     setCordinates([...finalData]);
     console.log("cordinates", cordinates);
-    if (cordinates.length > 0) {
+    if (allData.length > 0) {
       let i = 0;
       setLoading(true);
-      // for (i; i < cordinates.length; i++) {
-      //   const res = await getNearestLocation(
-      //     cordinates[i].lat,
-      //     cordinates[i].lon
-      //   );
-
-      //   arr.push(res);
-      //  }
+      for (i; i < allData.length; i++) {
+        if (i % 200 === 0) {
+          const response = await getNearestStation(
+            allData[i][1],
+            allData[i][0],
+            2
+          );
+          arr1.push(...arr1, ...response);
+        }
+      }
     }
-    console.log("polyPoints", polyPoints, arr);
+    setArr(...arr1);
+    console.log("arr", arr1);
+
     setLoading(false);
-    if (polyPoints.length > 0)
-      navigate("/plans", { state: { polyPoints, arr } });
+    // console.log("polyPoints", polyPoints, arr);
+    // setLoading(false);
+    // if (polyPoints.length > 0)
   };
 
   const getPredDistance = async (lat, lon) => {
@@ -197,81 +211,81 @@ const GetPath = () => {
 
   return (
     <div>
-      <Navbar />
-      <div className="flex">
-        <div
-          className="first w-[35%] flex flex-col
-        items-start justify-start p-8
-        "
-        >
-          <h2 className="text-4xl font-bold my-8 pb-4 ">
-            Tell us what's your plan?
+      <div
+        className="navbar md:bg-transparent
+       overflow-x-hidden
+       bg-[#0f1021] md:shadow-none shadow-white shadow-sm"
+      >
+        <div className=" flex-1 z-1000 ">
+          <h2 className="text-xl md:text-3xl text-slate-200 font-bold ml-4">
+            Select Source & Destination
           </h2>
-          <div className="w-full flex justify-center pr-14 pt-2">
-            <label className="form-control w-full">
-              <div className="label">
-                <span className="label-text">Select Start Location</span>
-              </div>
-              <input
-                type="text"
-                placeholder="mumbai"
-                disabled
-                name="eventName"
-                value={sourceCity}
-                className="input input-bordered w-full"
-              />
-            </label>
-          </div>
-          <div className="w-full flex justify-center pr-14 pt-2">
-            <label className="form-control w-full">
-              <div className="label">
-                <span className="label-text">Select Destination Location</span>
-              </div>
-              <input
-                type="text"
-                placeholder="Pune"
-                disabled
-                name="eventName"
-                value={destinationCity}
-                className="input input-bordered w-full"
-              />
-            </label>
-          </div>
-          <button
-            onClick={async () => {
-              getCordinates();
-              await getPredDistance();
+        </div>
+        <button
+          onClick={async () => {
+            // getCordinates();
+            // await getPredDistance();
 
-              console.log(actualDistance);
-              console.log(estimatedDistance);
+            console.log(actualDistance);
+            console.log(estimatedDistance);
 
-              if (actualDistance === 0 && estimatedDistance === 0) {
-                return;
-              }
+            // if (actualDistance === 0 && estimatedDistance === 0) {
+            //   return;
+            // }
 
-              if (actualDistance > estimatedDistance) {
-                getCurrentLatLon();
-                //  alert('You are running out of battery')
-                getNearestStation(latLon.lat, latLon.lon, estimatedDistance);
-              } else {
-                alert("You are good to go");
-              }
-            }}
-            className="mt-12 
+            // if (actualDistance > estimatedDistance) {
+
+            getCordinates().then((res) => {
+              console.log("get coord res", res);
+              getCurrentLatLon().then((res) => {
+                console.log("get curr lat res", res);
+                if (cordinates.length > 0) {
+                  console.log("arr1", arr1);
+                  navigate("/plans", {
+                    state: { res: new Set(arr1), cordinates },
+                  });
+                }
+              });
+            });
+
+            console.log("imp data", {
+              arr,
+              polyPoints,
+            });
+
+            console.log({
+              polyPoints,
+              arr,
+            });
+            // setTime(() => {
+            //   navigate("/plans", { state: { polyPoints, arr } });
+            // }, 8000);
+            //  alert('You are running out of battery')
+            console.log("latLon", lat);
+            if (lat && lon) {
+            }
+            if (nearestStation.length > 0) {
+            }
+            // } else {
+            //   alert("You are good to go");
+            // }
+          }}
+          className=" 
+    
             btn bg-black text-white
-            w-[60%]  my-8"
-          >
-            Get Plans
-          </button>
-        </div>
-        <div className="second w-[60%]">
-          <MapboxComponent
-            setDestination={setDestination}
-            setSource={setSource}
-            setPath={setPath}
-            setTime={setTime}
-          />
-        </div>
+            md:w-[14%]  md:mr-8"
+        >
+          Get EV Stations ->
+        </button>
+      </div>
+
+      <div className="w-[98%] mx-auto">
+        <MapboxComponent
+          setDestination={setDestination}
+          setSource={setSource}
+          setPath={setPath}
+          setTime={setTime}
+        />
       </div>
     </div>
   );
