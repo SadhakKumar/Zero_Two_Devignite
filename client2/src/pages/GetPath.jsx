@@ -5,7 +5,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { Alert } from "antd";
 
-import { getNearestStation } from "../utils/nearestStation";
+import { getNearestStation,getAllNearestStation } from "../utils/nearestStation";
 import { firestore, doc, getDoc } from "../firebase";
 
 const GetPath = () => {
@@ -93,10 +93,10 @@ const GetPath = () => {
       setLoading(true);
       for (i; i < allData.length; i++) {
         if (i % 200 === 0) {
-          const response = await getNearestStation(
+          const response = await getAllNearestStation(
             allData[i][1],
             allData[i][0],
-            2
+            30
           );
           arr1.push(...arr1, ...response);
         }

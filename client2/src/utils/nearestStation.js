@@ -3,19 +3,34 @@ import { firestore, doc, getDoc, collection, query, where } from "../firebase";
 import { getDocs } from "firebase/firestore";
 import axios from "axios";
 
-export async function getNearestStation(lat, lon, distance) {
+export async function getNearestStation(lat, lon, distance,destLat,destLon) {
   const arr = calculateCoordinates(lat, lon, distance);
   console.log("arr", arr);
   const chargingPoints = await fetchChargingPoints(arr);
 
-  console.log("charging point", chargingPoints);
-  chargingPoints.sort((a, b) => {
-    if (a.latitude === b.latitude) {
-      return a.longitude - b.longitude;
+  let min = 1000000;
+  let minIndex = 0;
+  chargingPoints.map((points,index) =>{
+    let mins = Math.sqrt(Math.pow(points.lattitude - destLat,2) + Math.pow(points.longitude - destLon,2));
+
+    if(mins < min){
+      min = mins;
+      minIndex = index;
     }
-    return a.latitude - b.latitude;
+
+    
   });
+  // console.log(chargingPoints[minIndex]);
+  return chargingPoints[minIndex];
+}
+
+export async function getAllNearestStation (lat, lon, distance) {
+  const arr = calculateCoordinates(lat, lon, distance);
+  const chargingPoints = await fetchChargingPoints(arr);
+
+  console.log(chargingPoints)
   return chargingPoints;
+
 }
 
 async function fetchChargingPoints(arr) {
@@ -29,7 +44,7 @@ async function fetchChargingPoints(arr) {
       "https://36hdwrzm-3000.inc1.devtunnels.ms/stations"
     );
 
-    console.log("q", q.data);
+    // console.log("q", q.data);
 
     const chargingPoints = [];
     q.data.forEach((doc) => {
@@ -38,7 +53,7 @@ async function fetchChargingPoints(arr) {
     console.log("charging points", chargingPoints);
     const response = filterChargingPoints(chargingPoints, arr);
 
-    console.log("response", response);
+    // console.log("response", response);
 
     return response;
   } catch (error) {
