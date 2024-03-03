@@ -27,6 +27,7 @@ function LoginPage() {
         onChange={(e) => setEmail(e.target.value)}
         className="login-input"
       />
+      
       <br />
       <input
         type="password"
@@ -38,7 +39,7 @@ function LoginPage() {
       <br />
       <button onClick={handleLogin} className="login-button">Login</button>
     </div>
-    
+
   );
 }
 
