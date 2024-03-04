@@ -14,8 +14,7 @@ import {
 import "mapbox-gl-controls/lib/controls.css";
 
 mapboxgl.accessToken =
-  "pk.eyJ1IjoibXJ1bmFsMTIzNDU2Nzg5IiwiYSI6ImNsbWhzbWF2cTBzajAzcXIybTVoa3g1anQifQ.66Fu05Ii8-NVd-w-C-FSgA";
-// "pk.eyJ1IjoiYXlhYW56YXZlcmkiLCJhIjoiY2ttZHVwazJvMm95YzJvcXM3ZTdta21rZSJ9.WMpQsXd5ur2gP8kFjpBo8g";
+  "API_KEY";
 
 class PolyLineComponent extends React.Component {
   constructor(props) {
