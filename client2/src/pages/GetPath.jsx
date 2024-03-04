@@ -64,7 +64,7 @@ const GetPath = () => {
     var url = `http://router.project-osrm.org/route/v1/driving/${source[1]},${source[0]};${destination[1]},${destination[0]}?steps=true&annotations=true&geometries=geojson&overview=full`;
 
     const mapBoxUrl =
-      "https://api.mapbox.com/directions/v5/mapbox/driving/72.894434%2C19.049821%3B73.867274%2C18.470933?alternatives=true&geometries=geojson&language=en&overview=full&steps=true&access_token=pk.eyJ1IjoibXJ1bmFsMTIzNDU2Nzg5IiwiYSI6ImNsbWhzbWF2cTBzajAzcXIybTVoa3g1anQifQ.66Fu05Ii8-NVd-w-C-FSgA";
+      "https://api.mapbox.com/directions/v5/mapbox/driving/72.894434%2C19.049821%3B73.867274%2C18.470933?alternatives=true&geometries=geojson&language=en&overview=full&steps=true&access_token="API_KEY";
     const response = await fetch(mapBoxUrl);
     const data = await response.json();
 
