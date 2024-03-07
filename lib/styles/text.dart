@@ -1,4 +1,4 @@
-import 'package:ev_simulator/styles.dart';
+import 'package:ev_simulator/styles/styles.dart';
 import 'package:flutter/material.dart';
 
 class AppTextStyles {
